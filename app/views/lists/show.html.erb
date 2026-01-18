@@ -1,0 +1,25 @@
+<h1><%= @list.name %></h1>
+
+<h2>Movies</h2>
+
+<ul>
+  <% @list.bookmarks.each do |bookmark| %>
+    <li>
+      <strong><%= bookmark.movie.title %></strong>
+      <% if bookmark.comment.present? %>
+        – <%= bookmark.comment %>
+      <% end %>
+      <%= link_to "Remove", bookmark_path(bookmark), data: { turbo_method: :delete } %>
+    </li>
+  <% end %>
+</ul>
+
+<h3>Add movie</h3>
+
+<%= simple_form_for [@list, Bookmark.new] do |f| %>
+  <%= f.input :movie_id, collection: Movie.all, label_method: :title, value_method: :id %>
+  <%= f.input :comment %>
+  <%= f.submit "Add" %>
+<% end %>
+
+<%= link_to "Back", lists_path %>
