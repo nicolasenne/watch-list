@@ -1,0 +1,41 @@
+<div class="home-container">
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title">
+        Describe a scene. Discover movies.
+      </h1>
+      <p class="hero-subtitle">
+        Type a scene, a sequence, or a summary and we’ll help you discover movies that match it.
+      </p>
+    </div>
+
+    <%= form_with url: root_path, method: :get, local: true, class: "hero-form" do %>
+      <div class="search-bar">
+        <%= text_field_tag :query, params[:query],
+              placeholder: "A lonely character walking at night in the rain…",
+              class: "search-input" %>
+
+        <button type="submit"
+                class="search-button"
+                data-disable-with="Searching…">
+          <i class="fa fa-search me-1"></i>
+          Discover
+        </button>
+      </div>
+    <% end %>
+  </section>
+
+  <% if @results.present? %>
+    <section class="results">
+      <div class="cards">
+        <% @results.each do |movie| %>
+          <%= render "movies/card",
+                movie: movie,
+                default_list: @default_list,
+                saved_movie_ids: @saved_movie_ids,
+                lists: @user.lists %>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+</div>

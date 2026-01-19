@@ -1,12 +1,19 @@
-.navbar-lewagon {
-  justify-content: space-between;
-  background: white;
+.navbar {
+  background-color: $light-blue;
 }
 
-.navbar-lewagon .navbar-collapse {
-  flex-grow: 0;
+.navbar-brand {
+  color: $purple;
+  font-weight: 700;
+  transition: .4s;
 }
 
-.navbar-lewagon .navbar-brand img {
-  width: 40px;
+.nav-link {
+  color: $jet;
+  font-size: .8rem;
+  font-weight: 600;
+
+  &:hover {
+    color: $purple;
+  }
 }

@@ -1,17 +1,44 @@
 <h1>Search movies</h1>
 
-<%= form_with url: movies_search_path, method: :get do %>
-  <%= text_field_tag :query, params[:query] %>
-  <%= submit_tag "Search" %>
+<%= form_with url: movies_search_path, method: :get, local: true, class: "mb-4" do %>
+  <%= text_field_tag :query, params[:query], placeholder: "Search by title", class: "form-control mb-2" %>
+  <%= submit_tag "Search", class: "btn btn-primary" %>
 <% end %>
 
-<% if @results %>
-  <ul>
+<% if @results.present? %>
+  <div class="row">
     <% @results.each do |movie| %>
-      <li>
-        <strong><%= movie["title"] %></strong>
-        (<%= movie["release_date"]&.first(4) %>)
-      </li>
+      <div class="col-md-4 mb-3">
+        <div class="card h-100">
+          <% if movie["poster_path"] %>
+            <img
+              src="https://image.tmdb.org/t/p/w300<%= movie["poster_path"] %>"
+              class="card-img-top"
+            >
+          <% end %>
+          <div class="card-body">
+            <h5 class="card-title"><%= movie["title"] %></h5>
+            <p class="card-text small">
+              <%= truncate(movie["overview"], length: 120) %>
+            </p>
+            <%= form_with url: list_bookmarks_path(List.first), method: :post, local: true do %>
+              <%= hidden_field_tag "movie[external_id]", movie["id"] %>
+              <%= hidden_field_tag "movie[title]", movie["title"] %>
+              <%= hidden_field_tag "movie[overview]", movie["overview"] %>
+              <%= hidden_field_tag "movie[poster_url]", movie["poster_path"] %>
+              <%= hidden_field_tag "movie[backdrop_url]", movie["backdrop_path"] %>
+              <%= hidden_field_tag "movie[release_year]", movie["release_date"]&.first(4) %>
+              <%= hidden_field_tag "movie[rating]", movie["vote_average"] %>
+
+              <%= select_tag :list_id,
+                    options_from_collection_for_select(List.all, :id, :name),
+                    class: "form-select mb-2" %>
+
+              <%= submit_tag "Save", class: "btn btn-sm btn-success" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
     <% end %>
-  </ul>
+  </div>
 <% end %>

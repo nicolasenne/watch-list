@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'home/index'
   get 'movies/search'
   get 'bookmarks/create'
   get 'bookmarks/destroy'
@@ -13,5 +14,5 @@ Rails.application.routes.draw do
   resources :bookmarks, only: [:destroy]
   
   get "movies/search", to: "movies#search"
-  root "lists#index"
+  root "home#index"
 end

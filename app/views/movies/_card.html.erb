@@ -1,0 +1,87 @@
+<div class="movie-card">
+  <% if movie["poster_path"] %>
+    <img src="https://image.tmdb.org/t/p/w300<%= movie["poster_path"] %>">
+  <% end %>
+
+  <div class="movie-info">
+    <h3><%= movie["title"] %></h3>
+
+    <p class="meta">
+      <%= movie["release_date"]&.first(4) %>
+      <% if movie["vote_average"] %>
+        · <i class="fa-solid fa-star"></i> <%= movie["vote_average"].round(1) %>
+      <% end %>
+    </p>
+
+    <p class="overview">
+      <%= truncate(movie["overview"], length: 120) %>
+    </p>
+
+    <% already_saved = false %>
+
+    <%= form_with url: list_bookmarks_path(default_list),
+        method: :post,
+        local: true,
+        data: { turbo: false } do %>
+      <%= hidden_field_tag "movie[external_id]", movie["id"] %>
+      <%= hidden_field_tag "movie[title]", movie["title"] %>
+      <%= hidden_field_tag "movie[overview]", movie["overview"] %>
+      <%= hidden_field_tag "movie[poster_url]", movie["poster_path"] %>
+      <%= hidden_field_tag "movie[backdrop_url]", movie["backdrop_path"] %>
+      <%= hidden_field_tag "movie[release_year]", movie["release_date"]&.first(4) %>
+      <%= hidden_field_tag "movie[rating]", movie["vote_average"] %>
+    <% end %>
+
+      <button
+        class="favorite"
+        data-bs-toggle="modal"
+        data-bs-target="#saveMovieModal-<%= movie["id"] %>"
+        <%= "disabled" if already_saved %>>
+        <% if already_saved %>
+          <i class="fa-solid fa-bookmark"></i>
+        <% else %>
+          <i class="fa-regular fa-bookmark"></i>
+        <% end %>
+      </button>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="saveMovieModal-<%= movie["id"] %>"
+  tabindex="-1"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Save movie</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <%= form_with url: list_bookmarks_path(default_list),
+              method: :post,
+              local: true do %>
+
+          <%= hidden_field_tag "movie[external_id]", movie["id"] %>
+          <%= hidden_field_tag "movie[title]", movie["title"] %>
+          <%= hidden_field_tag "movie[overview]", movie["overview"] %>
+          <%= hidden_field_tag "movie[poster_url]", movie["poster_path"] %>
+          <%= hidden_field_tag "movie[backdrop_url]", movie["backdrop_path"] %>
+          <%= hidden_field_tag "movie[release_year]", movie["release_date"]&.first(4) %>
+          <%= hidden_field_tag "movie[rating]", movie["vote_average"] %>
+
+          <%= select_tag :list_id,
+                options_from_collection_for_select(lists, :id, :name),
+                class: "form-select mb-3" %>
+
+          <%= submit_tag "Save",
+                class: "btn btn-primary w-100",
+                data: { disable_with: "Saving…" } %>
+        <% end %>
+      </div>
+
+    </div>
+  </div>
+</div>
